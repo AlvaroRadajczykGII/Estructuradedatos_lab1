@@ -80,7 +80,7 @@ void funcionF(){
     pilaconreserva.mostrarToda();
 }
 void funcionG(){
-    while !(pilaconreserva.esVacia())
+    while (!pilaconreserva.esVacia())
     {
         pilaconreserva.desapilar();
     }
@@ -94,22 +94,22 @@ void funcionI(){
 void funcionJ(){
     char seleccion;
     cout << "Inserte 'R' para borrar la cola de registrados, 'N' para borrar la de no registrados y 'A' para ambas";
-    seleccion.getchar();
-    if (seleccion=="R"){
-        while !(colaregistrados.esVacia()){
+    seleccion=getch();
+    if (seleccion == 'R'){
+        while (!colaregistrados.es_vacia()) {
             colaregistrados.desencolar();
         }
     }
-    else if (seleccion=="N"){
-        while !(colasinregistrar.esVacia()){
+    else if (seleccion == 'N'){
+        while (!colasinregistrar.es_vacia()){
             colasinregistrar.desencolar();
         }
     }
-    else if (seleccion=="A"){
-        while !(colaregistrados.esVacia()){
+    else if (seleccion == 'A'){
+        while (!colaregistrados.es_vacia()){
             colaregistrados.desencolar();
         }
-        while !(colasinregistrar.esVacia()){
+        while (!colasinregistrar.es_vacia()){
             colasinregistrar.desencolar();
         }
     }
