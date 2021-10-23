@@ -76,8 +76,46 @@ void funcionB(){
     
 }
 
+void funcionF(){
+    pilaconreserva.mostrarToda();
+}
 void funcionG(){
-    //pilaconreserva.quitar(pilaconreserva.contar());
+    while !(pilaconreserva.esVacia())
+    {
+        pilaconreserva.desapilar();
+    }
+}
+void funcionH(){
+    colaregistrados.mostrarCola();
+}
+void funcionI(){
+    colasinregistrar.mostrarCola();
+}
+void funcionJ(){
+    char seleccion;
+    cout << "Inserte 'R' para borrar la cola de registrados, 'N' para borrar la de no registrados y 'A' para ambas";
+    seleccion.getchar();
+    if (seleccion=="R"){
+        while !(colaregistrados.esVacia()){
+            colaregistrados.desencolar();
+        }
+    }
+    else if (seleccion=="N"){
+        while !(colasinregistrar.esVacia()){
+            colasinregistrar.desencolar();
+        }
+    }
+    else if (seleccion=="A"){
+        while !(colaregistrados.esVacia()){
+            colaregistrados.desencolar();
+        }
+        while !(colasinregistrar.esVacia()){
+            colasinregistrar.desencolar();
+        }
+    }
+    else{
+    cout << "Opcion no permitida";
+    }
 }
 
 void funcion$(){
