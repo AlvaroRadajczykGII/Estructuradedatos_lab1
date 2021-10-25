@@ -18,6 +18,7 @@ class Cola
         Cliente desencolar();
         int get_longitud();
         bool es_vacia();
+        bool existeMismoIdentificador( Cliente c );
         void mostrarCola(); //No es correcto, se implementa para ver que está creada correctamente
 };
 

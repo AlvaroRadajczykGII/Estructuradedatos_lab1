@@ -7,13 +7,17 @@ class Pila
     
     private:
         pnodo cima;
-    
+        pnodo fondo_registrado;    
     public:
         Pila();
         ~Pila();
         bool esVacia();
+        bool existeMismoIdentificador(Cliente c);
+        bool existeMismoIdentificador(char *texto);
         void apilar(Cliente c);
+        void apilarLaboratorio(Cliente c);
         void desapilar();
+        void desapilarLaboratorio();
         void mostrar();
         void mostrarToda();
         //EJERCICIOS

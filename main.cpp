@@ -2,9 +2,11 @@
 #include "Cola.hpp"
 #include "Cliente.hpp"
 #include <iostream>
+#include <cctype>
 #include <time.h>       /* time */
 #include <math.h>
 #include <conio.h>      /*Para coger un solo caracter de opcion*/
+#include <string.h>
 #include "funciones_aparte.h"
 using namespace std;
 
@@ -37,8 +39,16 @@ bool mostrarMenú(){
     x=getch() ;
     cout << "\n Letra escogida: "<<x<< "\n";
     if ((x>='a' and x<='z') or (x>='A' and x<='Z')){
-        if( x == 'a' or x == 'A' ){ funcionA(); }
-        if( x == 'b' or x == 'B' ){ funcionB(); }
+        if( tolower(x) == 'a' ){ funcionA(); }
+        if( tolower(x) == 'b' ){ funcionB(); }
+        if( tolower(x) == 'c' ){ funcionC(); }
+        if( tolower(x) == 'd' ){ funcionD(); }
+        if( tolower(x) == 'e' ){ funcionE(); }
+        if( tolower(x) == 'f' ){ funcionF(); }
+        if( tolower(x) == 'g' ){ funcionG(); }
+        if( tolower(x) == 'h' ){ funcionH(); }
+        if( tolower(x) == 'i' ){ funcionI(); }
+        if( tolower(x) == 'j' ){ funcionJ(); }
         return true;
     } else if (x=='$'){
         return false;
@@ -51,33 +61,83 @@ bool mostrarMenú(){
 void funcionA(){
     //limpiar la pila y las colas
     funcionG();
-    pilaconreserva.quitar(pilaconreserva.contar());
+    while (!colaregistrados.es_vacia()){ colaregistrados.desencolar(); }
+    while (!colasinregistrar.es_vacia()){ colasinregistrar.desencolar(); }
     //llenar la pila de clientes con reserva
     int numero_clientes = rand() % 11 + 5;
     for( int i = 0; i < numero_clientes; i++ ){
         Cliente c;
-        pilaconreserva.apilar( c );
+        while( pilaconreserva.existeMismoIdentificador(c) ){ c = new Cliente(); }
+        pilaconreserva.apilarLaboratorio( c );
     }
     //llenar la cola de clientes registrados
     int numero_clientes_2 = rand() % 11 + 5;
     for( int i = 0; i < numero_clientes_2; i++ ){
-        Cliente c;
-        colaregistrados.encolar( c );
+        Cliente c_2( true );
+        while( pilaconreserva.existeMismoIdentificador(c_2) ){ c_2 = new Cliente(true); }
+        colaregistrados.encolar( c_2 );
     }
-    //llenar la cola de clientes registrados
+    //llenar la cola de clientes sin registrar
     int numero_clientes_3 = rand() % 11 + 5;
     for( int i = 0; i < numero_clientes_3; i++ ){
-        Cliente c;
-        colasinregistrar.encolar( c );
+        Cliente c_3( false );
+        while( pilaconreserva.existeMismoIdentificador(c_3) ){ c_3 = new Cliente(false); }
+        colasinregistrar.encolar( c_3 );
     }
 }
 
 void funcionB(){
+    char texto[] = "Por favor, intoducir un numero entero positivo: ";
+    int numero_clientes = get_int(texto);
+    for( int i = 0; i < numero_clientes; i++ ){
+        Cliente c;
+        while( pilaconreserva.existeMismoIdentificador(c) ){ c = new Cliente(); }
+        pilaconreserva.apilarLaboratorio( c );
+    }
+}
+
+void funcionC(){
+    char texto[] = "Por favor, para los clientes registrados, intoducir un numero entero positivo: ";
+    int numero_clientes = get_int(texto);
+    for( int i = 0; i < numero_clientes; i++ ){
+        Cliente c(true);
+        while( pilaconreserva.existeMismoIdentificador(c) ){ c = new Cliente(true); }
+        colaregistrados.encolar( c );
+    }
+    char texto2[] = "Por favor, para los clientes sin registrar, intoducir un numero entero positivo: ";
+    numero_clientes = get_int(texto2);
+    for( int i = 0; i < numero_clientes; i++ ){
+        Cliente c(false);
+        while( pilaconreserva.existeMismoIdentificador(c) ){ c = new Cliente(false); }
+        colasinregistrar.encolar( c );
+    }
+}
+
+void funcionD(){
+    bool estado; bool *pestado = &estado;
+    int minuto; int *pminuto = &minuto;
+    char *identificador = new char[10];
+    Cliente c; c.obtenerValoresIntroducidosManualmente( pestado, pminuto, identificador );
+    while( pilaconreserva.existeMismoIdentificador(identificador) ){ identificador = c.obtenerIdentificadorManualmente( estado ); }
+    Cliente c2( *pestado, *pminuto, identificador );
+    pilaconreserva.apilar(c2);
+}
+
+void funcionE(){
+    bool estado; bool *pestado = &estado;
+    int minuto; int *pminuto = &minuto;
+    char *identificador = new char[10];
+    Cliente c; c.obtenerValoresIntroducidosManualmente( pestado, pminuto, identificador );
+    while( pilaconreserva.existeMismoIdentificador(identificador) ){ identificador = c.obtenerIdentificadorManualmente( estado ); }
+    Cliente c2( *pestado, *pminuto, identificador );
+    if(estado){ colaregistrados.encolar(c2); }
+    else{ colasinregistrar.encolar(c2); }
     
 }
 
 void funcionF(){
     pilaconreserva.mostrarToda();
+    cout << "\n";
 }
 void funcionG(){
     while (!pilaconreserva.esVacia())
@@ -87,25 +147,27 @@ void funcionG(){
 }
 void funcionH(){
     colaregistrados.mostrarCola();
+    cout << "\n";
 }
 void funcionI(){
     colasinregistrar.mostrarCola();
+    cout << "\n";
 }
 void funcionJ(){
     char seleccion;
     cout << "Inserte 'R' para borrar la cola de registrados, 'N' para borrar la de no registrados y 'A' para ambas";
     seleccion=getch();
-    if (seleccion == 'R'){
+    if ( tolower(seleccion) == 'r' ){
         while (!colaregistrados.es_vacia()) {
             colaregistrados.desencolar();
         }
     }
-    else if (seleccion == 'N'){
+    else if ( tolower(seleccion) == 'n' ){
         while (!colasinregistrar.es_vacia()){
             colasinregistrar.desencolar();
         }
     }
-    else if (seleccion == 'A'){
+    else if ( tolower(seleccion) == 'a' ){
         while (!colaregistrados.es_vacia()){
             colaregistrados.desencolar();
         }
@@ -114,12 +176,8 @@ void funcionJ(){
         }
     }
     else{
-    cout << "Opcion no permitida";
+    cout << "\n\nOpcion no permitida\n";
     }
-}
-
-void funcion$(){
-    
 }
 
 int main()
@@ -127,22 +185,8 @@ int main()
     bool seguir=true;
     srand (time(NULL));
     
-    //funcionB();
     while (seguir){
         seguir=mostrarMenú();
     }
-    
-    for( int i = 0; i < 20; i++ ){
-        colaregistrados.mostrarCola();
-        Cliente c;
-        colaregistrados.encolar(c);
-        cout << colaregistrados.get_longitud();
-    }
-    
-    cout << "\n\n Hay: " << colaregistrados.get_longitud() << " elementos\n\n";
-    for( int i = 0; i < colaregistrados.get_longitud(); i++ ){
-        colaregistrados.desencolar();
-    }
-    colaregistrados.mostrarCola();
     
 cout << "\n\n"; return 0; }

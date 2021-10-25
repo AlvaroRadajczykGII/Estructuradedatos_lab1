@@ -2,6 +2,7 @@
 #include "NodoPila.hpp"
 #include "Cliente.hpp"
 #include <iostream>
+#include <string.h>
 using namespace std;
 
 Pila::Pila()
@@ -20,6 +21,31 @@ void Pila::apilar(Cliente c)
     cima = nuevo;
 }
 
+void Pila::apilarLaboratorio(Cliente c)
+{
+    if( esVacia() ){
+        pnodo nuevo = new NodoPila(c, cima);
+        if( c.esta_registrado ){ fondo_registrado = nuevo; }
+        cima = nuevo; 
+    }
+    else if( c.esta_registrado ){
+        pnodo nuevo = new NodoPila(c, cima); 
+        cima = nuevo;
+        if( !fondo_registrado ){ fondo_registrado = nuevo; }
+    }
+    else if( !c.esta_registrado ){
+        if( fondo_registrado ){ 
+            pnodo nuevo = new NodoPila(c, fondo_registrado->siguiente); 
+            fondo_registrado->siguiente = nuevo;
+        }
+        else{
+            pnodo nuevo = new NodoPila(c, cima); 
+            cima = nuevo;
+        }
+    }
+
+}
+
 void Pila::desapilar()
 { 
     pnodo nodo; //puntero aux para manipular el nodo
@@ -27,6 +53,16 @@ void Pila::desapilar()
         nodo = cima;
         cima = nodo->siguiente;
         delete nodo;
+    }
+}
+
+void Pila::desapilarLaboratorio()
+{ 
+    desapilar();
+    if( cima ){
+        if( !cima->valor.esta_registrado ){
+            fondo_registrado = NULL;
+        }
     }
 }
 
@@ -45,15 +81,19 @@ void Pila::mostrar()
 
 void Pila::mostrarToda()
 { 
-    cout << "\n\nPila: " << contar() << "\n";
-    pnodo nodo = cima;
-    while( nodo != NULL ){
-        cout << "Elemento: ";
-        nodo->valor.showString();
-        cout << "\n";
-        nodo = nodo->siguiente;
+    int num = contar();
+    if( num < 1 ){ cout << "\n\nPila vacia\n"; }
+    else{
+        cout << "\n\nPila: " << num << "\n";
+        pnodo nodo = cima;
+        while( nodo != NULL ){
+            cout << "Elemento: ";
+            nodo->valor.showString();
+            cout << "\n";
+            nodo = nodo->siguiente;
+        }
+        delete nodo;
     }
-    delete nodo;
 }
 
 //EJERCICIOS
@@ -119,6 +159,33 @@ void Pila::eliminarFondoPila()
     invertir();
     desapilar();
     invertir();
+}
+
+bool Pila::existeMismoIdentificador(Cliente c){
+    bool estado = false;
+    pnodo nodo = cima;
+    char *puntero2 = c.identificador_cliente;
+    char *puntero1;
+    while( nodo != NULL && !estado ){
+        puntero1 = nodo->valor.identificador_cliente;
+        if( strcmp( puntero1, puntero2 ) == 0 ){ estado = true; }
+        nodo = nodo->siguiente;
+    }
+    delete nodo;
+    return estado;
+}
+
+bool Pila::existeMismoIdentificador(char *texto){
+    bool estado = false;
+    pnodo nodo = cima;
+    char *puntero1;
+    while( nodo != NULL && !estado ){
+        puntero1 = nodo->valor.identificador_cliente;
+        if( strcmp( puntero1, texto ) == 0 ){ estado = true; }
+        nodo = nodo->siguiente;
+    }
+    delete nodo;
+    return estado;
 }
 
 /*

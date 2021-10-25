@@ -1,6 +1,7 @@
 #include "Cola.hpp"
 #include "Cliente.hpp"
 #include <iostream>
+#include <string.h>
 using namespace std;
 
 Cola::Cola()
@@ -83,7 +84,7 @@ void Cola::mostrarCola()
 {
     NodoCola *aux = primero;
     
-    if (es_vacia()) {cout<<"Cola Vacía: "<<endl;}
+    if (es_vacia()) {cout<<"\n\nCola Vacia"<<endl;}
     else {
         cout<<"Datos de la Cola (Arriba el inicio, y abajo el final): \n";
         while (aux){
@@ -93,6 +94,22 @@ void Cola::mostrarCola()
             aux = aux->siguiente;
         }
     }
+}
+
+bool Cola::existeMismoIdentificador(Cliente c){
+    bool estado = false;
+    NodoCola *aux = primero;
+    char *puntero2 = c.identificador_cliente;
+    char *puntero1;
+    if (es_vacia()) { return false; }
+    else {
+        while (aux && !estado){
+            puntero1 = aux->elemento.identificador_cliente;
+            if( strcmp( puntero1, puntero2 ) == 0 ){ estado = true; }
+            aux = aux->siguiente;
+        }
+    }
+    return estado;
 }
 
 
