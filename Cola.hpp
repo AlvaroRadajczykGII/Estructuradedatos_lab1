@@ -19,6 +19,7 @@ class Cola
         int get_longitud();
         bool es_vacia();
         bool existeMismoIdentificador( Cliente c );
+        bool existeMismoIdentificador( char *texto );
         void mostrarCola(); //No es correcto, se implementa para ver que está creada correctamente
 };
 

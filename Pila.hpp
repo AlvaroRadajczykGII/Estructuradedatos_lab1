@@ -6,18 +6,16 @@ class Pila
 {
     
     private:
-        pnodo cima;
-        pnodo fondo_registrado;    
+        pnodo cima; 
     public:
         Pila();
         ~Pila();
         bool esVacia();
         bool existeMismoIdentificador(Cliente c);
-        bool existeMismoIdentificador(char *texto);
+        bool existeMismoIdentificador(char texto[10]);
         void apilar(Cliente c);
-        void apilarLaboratorio(Cliente c);
+        void apilarPorTipo(Cliente c);
         void desapilar();
-        void desapilarLaboratorio();
         void mostrar();
         void mostrarToda();
         //EJERCICIOS

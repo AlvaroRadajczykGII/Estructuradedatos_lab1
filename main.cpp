@@ -67,21 +67,18 @@ void funcionA(){
     int numero_clientes = rand() % 11 + 5;
     for( int i = 0; i < numero_clientes; i++ ){
         Cliente c;
-        while( pilaconreserva.existeMismoIdentificador(c) ){ c = new Cliente(); }
-        pilaconreserva.apilarLaboratorio( c );
+        pilaconreserva.apilarPorTipo( c );
     }
     //llenar la cola de clientes registrados
     int numero_clientes_2 = rand() % 11 + 5;
     for( int i = 0; i < numero_clientes_2; i++ ){
         Cliente c_2( true );
-        while( pilaconreserva.existeMismoIdentificador(c_2) ){ c_2 = new Cliente(true); }
         colaregistrados.encolar( c_2 );
     }
     //llenar la cola de clientes sin registrar
     int numero_clientes_3 = rand() % 11 + 5;
     for( int i = 0; i < numero_clientes_3; i++ ){
         Cliente c_3( false );
-        while( pilaconreserva.existeMismoIdentificador(c_3) ){ c_3 = new Cliente(false); }
         colasinregistrar.encolar( c_3 );
     }
 }
@@ -91,8 +88,7 @@ void funcionB(){
     int numero_clientes = get_int(texto);
     for( int i = 0; i < numero_clientes; i++ ){
         Cliente c;
-        while( pilaconreserva.existeMismoIdentificador(c) ){ c = new Cliente(); }
-        pilaconreserva.apilarLaboratorio( c );
+        pilaconreserva.apilarPorTipo( c );
     }
 }
 
@@ -101,37 +97,44 @@ void funcionC(){
     int numero_clientes = get_int(texto);
     for( int i = 0; i < numero_clientes; i++ ){
         Cliente c(true);
-        while( pilaconreserva.existeMismoIdentificador(c) ){ c = new Cliente(true); }
         colaregistrados.encolar( c );
     }
     char texto2[] = "Por favor, para los clientes sin registrar, intoducir un numero entero positivo: ";
     numero_clientes = get_int(texto2);
     for( int i = 0; i < numero_clientes; i++ ){
         Cliente c(false);
-        while( pilaconreserva.existeMismoIdentificador(c) ){ c = new Cliente(false); }
         colasinregistrar.encolar( c );
     }
 }
 
 void funcionD(){
-    bool estado; bool *pestado = &estado;
-    int minuto; int *pminuto = &minuto;
-    char *identificador = new char[10];
-    Cliente c; c.obtenerValoresIntroducidosManualmente( pestado, pminuto, identificador );
-    while( pilaconreserva.existeMismoIdentificador(identificador) ){ identificador = c.obtenerIdentificadorManualmente( estado ); }
-    Cliente c2( *pestado, *pminuto, identificador );
-    pilaconreserva.apilar(c2);
+    char *puntero = new char[10];
+    Cliente c(puntero);
+    // !
+    if( !pilaconreserva.existeMismoIdentificador(puntero) ){
+        c.showString();
+        pilaconreserva.apilarPorTipo( c );
+        pilaconreserva.mostrarToda();
+    } else { cout << "\nIdentificador repetido\n\n"; }
 }
 
 void funcionE(){
-    bool estado; bool *pestado = &estado;
-    int minuto; int *pminuto = &minuto;
-    char *identificador = new char[10];
-    Cliente c; c.obtenerValoresIntroducidosManualmente( pestado, pminuto, identificador );
-    while( pilaconreserva.existeMismoIdentificador(identificador) ){ identificador = c.obtenerIdentificadorManualmente( estado ); }
-    Cliente c2( *pestado, *pminuto, identificador );
-    if(estado){ colaregistrados.encolar(c2); }
-    else{ colasinregistrar.encolar(c2); }
+    char *puntero = new char[10];
+    Cliente c(puntero);
+    // !
+    if( c.getEstado() ){
+        if( !colaregistrados.existeMismoIdentificador(puntero) ){
+            c.showString();
+            colaregistrados.encolar(c);
+            colaregistrados.mostrarCola();
+        } else { cout << "\nIdentificador repetido\n\n"; }
+    } else {
+        if( !colasinregistrar.existeMismoIdentificador(puntero) ){
+            c.showString();
+            colasinregistrar.encolar(c);
+            colasinregistrar.mostrarCola();
+        } else { cout << "\nIdentificador repetido\n\n"; }
+    }
     
 }
 

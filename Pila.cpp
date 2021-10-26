@@ -21,29 +21,24 @@ void Pila::apilar(Cliente c)
     cima = nuevo;
 }
 
-void Pila::apilarLaboratorio(Cliente c)
+void Pila::apilarPorTipo(Cliente c)
 {
-    if( esVacia() ){
-        pnodo nuevo = new NodoPila(c, cima);
-        if( c.esta_registrado ){ fondo_registrado = nuevo; }
-        cima = nuevo; 
+    Pila aux;
+    if( esVacia() || c.esta_registrado ){
+        apilar(c);
     }
-    else if( c.esta_registrado ){
-        pnodo nuevo = new NodoPila(c, cima); 
-        cima = nuevo;
-        if( !fondo_registrado ){ fondo_registrado = nuevo; }
-    }
-    else if( !c.esta_registrado ){
-        if( fondo_registrado ){ 
-            pnodo nuevo = new NodoPila(c, fondo_registrado->siguiente); 
-            fondo_registrado->siguiente = nuevo;
+    else{
+        while(!esVacia() && cima->valor.esta_registrado == 1){
+            aux.apilar( cima->valor );
+            desapilar();
         }
-        else{
-            pnodo nuevo = new NodoPila(c, cima); 
-            cima = nuevo;
-        }
+        apilar(c);
+        while ( !aux.esVacia() ){
+            apilar(aux.cima);
+            aux.desapilar();
+        } 
     }
-
+    
 }
 
 void Pila::desapilar()
@@ -53,16 +48,6 @@ void Pila::desapilar()
         nodo = cima;
         cima = nodo->siguiente;
         delete nodo;
-    }
-}
-
-void Pila::desapilarLaboratorio()
-{ 
-    desapilar();
-    if( cima ){
-        if( !cima->valor.esta_registrado ){
-            fondo_registrado = NULL;
-        }
     }
 }
 
@@ -122,14 +107,16 @@ void Pila::fondo( )
 
 void Pila::invertir()
 { 
-    Pila pilavacia;
-    pnodo nodo = cima;
-    while( nodo != NULL ){
-        pilavacia.apilar(nodo->valor);
-        nodo = nodo->siguiente;
+    if( !esVacia() ){
+        Pila pilavacia;
+        pnodo nodo = cima;
+        while( nodo != NULL ){
+            pilavacia.apilar(nodo->valor);
+            nodo = nodo->siguiente;
+        }
+        cima = pilavacia.cima;
+        delete nodo;
     }
-    cima = pilavacia.cima;
-    delete nodo;
 }
 
 void Pila::montar( Pila pilaapilar )
@@ -164,25 +151,35 @@ void Pila::eliminarFondoPila()
 bool Pila::existeMismoIdentificador(Cliente c){
     bool estado = false;
     pnodo nodo = cima;
-    char *puntero2 = c.identificador_cliente;
-    char *puntero1;
+    char texto1[10];
+    char texto2[10];
+    for( int i = 0; i < 9; i++ ){ texto1[i] = c.identificador_cliente[i]; }
+    texto1[9] = '\0';
     while( nodo != NULL && !estado ){
-        puntero1 = nodo->valor.identificador_cliente;
-        if( strcmp( puntero1, puntero2 ) == 0 ){ estado = true; }
-        nodo = nodo->siguiente;
+        for( int i = 0; i < 9; i++ ){ texto2[i] = nodo->valor.identificador_cliente[i]; }
+        texto2[9] = '\0';
+        cout << "Texto1: " << texto1 << "\n";
+        cout << "Texto2: " << texto2 << "\n";
+        if( strcmp( texto1, texto2 ) == 0 ){ nodo = NULL; estado = true; }
+        else{ nodo = nodo->siguiente; }
     }
-    delete nodo;
     return estado;
 }
 
-bool Pila::existeMismoIdentificador(char *texto){
+bool Pila::existeMismoIdentificador(char texto[10]){
     bool estado = false;
     pnodo nodo = cima;
-    char *puntero1;
+    char texto1[10];
+    char texto2[10];
+    for( int i = 0; i < 9; i++ ){ texto1[i] = texto[i]; }
+    texto1[9] = '\0';
     while( nodo != NULL && !estado ){
-        puntero1 = nodo->valor.identificador_cliente;
-        if( strcmp( puntero1, texto ) == 0 ){ estado = true; }
-        nodo = nodo->siguiente;
+        for( int i = 0; i < 9; i++ ){ texto2[i] = nodo->valor.identificador_cliente[i]; }
+        texto2[9] = '\0';
+        cout << "Texto1: " << texto1 << "\n";
+        cout << "Texto2: " << texto2 << "\n";
+        if( strcmp( texto1, texto2 ) == 0 ){ nodo = NULL; estado = true; }
+        else{ nodo = nodo->siguiente; }
     }
     delete nodo;
     return estado;

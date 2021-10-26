@@ -112,4 +112,22 @@ bool Cola::existeMismoIdentificador(Cliente c){
     return estado;
 }
 
+bool Cola::existeMismoIdentificador(char *texto){
+    bool estado = false;
+    NodoCola *aux = primero;
+    char *puntero1;
+    if (es_vacia()) { return false; }
+    else {
+        while (aux && !estado){
+            puntero1 = aux->elemento.identificador_cliente;
+            cout << "PARAMETRO: " << texto << "\n";
+            cout << "ELEM COLA: " << puntero1 << "\n";
+            cout << strcmp( puntero1, texto ) << "\n";
+            if( strcmp( puntero1, texto ) == 0  ){ estado = true; }
+            aux = aux->siguiente;
+        }
+    }
+    return estado;
+}
+
 

@@ -14,15 +14,18 @@ class Cliente
     public:
         Cliente();
         Cliente( bool estado );
-        Cliente( bool estado, int minuto, char *identificador );
+        Cliente( char *copiar_identificador );
         ~Cliente();
         void setEstaRegistrado( bool estado );
         void setMinutoLlegada( int minuto );
-        void setIdentificador( char *texto );
         void mostrarIdentificador();
         void showString();
-        char *obtenerIdentificadorManualmente( bool registrado );
-        void obtenerValoresIntroducidosManualmente( bool *estado, int *minuto, char *identificador );
+        bool getEstado();
+        void obtenerIdentificadorManualmente( bool registrado );
+        void copiarIdenficador( char *puntero );
+        bool introducirEstado();
+        int introducirMinuto();
+        void introducirManualmente();
 
 };
 
