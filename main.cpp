@@ -1,5 +1,6 @@
 #include "Pila.hpp"
 #include "Cola.hpp"
+#include "Lista.hpp"
 #include "Cliente.hpp"
 #include <iostream>
 #include <cctype>
@@ -108,38 +109,28 @@ void funcionC(){
 }
 
 void funcionD(){
-    char *puntero = new char[10];
-    Cliente c(puntero);
-    // !
-    if( !pilaconreserva.existeMismoIdentificador(puntero) ){
-        c.showString();
+    Cliente c('I');
+    if( !existeMismoIdentificador( pilaconreserva, c ) ){
         pilaconreserva.apilarPorTipo( c );
-        pilaconreserva.mostrarToda();
     } else { cout << "\nIdentificador repetido\n\n"; }
 }
 
 void funcionE(){
-    char *puntero = new char[10];
-    Cliente c(puntero);
-    // !
+    Cliente c('I');
     if( c.getEstado() ){
-        if( !colaregistrados.existeMismoIdentificador(puntero) ){
-            c.showString();
+        if( !existeMismoIdentificador( colaregistrados, c ) ){
             colaregistrados.encolar(c);
-            colaregistrados.mostrarCola();
         } else { cout << "\nIdentificador repetido\n\n"; }
     } else {
-        if( !colasinregistrar.existeMismoIdentificador(puntero) ){
-            c.showString();
+        if( !existeMismoIdentificador( colasinregistrar, c ) ){
             colasinregistrar.encolar(c);
-            colasinregistrar.mostrarCola();
         } else { cout << "\nIdentificador repetido\n\n"; }
     }
     
 }
 
 void funcionF(){
-    pilaconreserva.mostrarToda();
+    mostrar(pilaconreserva);
     cout << "\n";
 }
 void funcionG(){
@@ -149,11 +140,11 @@ void funcionG(){
     }
 }
 void funcionH(){
-    colaregistrados.mostrarCola();
+    mostrar(colaregistrados);
     cout << "\n";
 }
 void funcionI(){
-    colasinregistrar.mostrarCola();
+    mostrar(colasinregistrar);
     cout << "\n";
 }
 void funcionJ(){
@@ -185,11 +176,23 @@ void funcionJ(){
 
 int main()
 {
-    bool seguir=true;
+
     srand (time(NULL));
     
+    bool seguir=true;
+    srand (time(NULL));
+
     while (seguir){
         seguir=mostrarMenú();
     }
+    
+    /*
+    Lista l;
+    for( int i = 0; i < 40; i++ ){ 
+        Cliente c;
+        l.insertar(c);
+    }
+    l.mostrarLista();
+    */
     
 cout << "\n\n"; return 0; }

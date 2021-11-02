@@ -6,205 +6,152 @@
 using namespace std;
 
 Pila::Pila()
-{cima = NULL;}
-
-Pila::~Pila()
-{ while(cima) desapilar();}
-
-bool Pila::esVacia()
-{ return cima == NULL; }
-
-void Pila::apilar(Cliente c)
 {
-    pnodo nuevo = new NodoPila(c, cima);
-    //comienzo de la pila nevo nodo
-    cima = nuevo;
+    ncima = NULL;
 }
 
-void Pila::apilarPorTipo(Cliente c)
+Pila::Pila( const Pila &p ) //creado para evitar la implementación de memoria dinámica lo máximo posible (junto con ajustes en las void Pila::desapilar() y en Pila::~Pila() )
 {
-    Pila aux;
-    if( esVacia() || c.esta_registrado ){
-        apilar(c);
-    }
-    else{
-        while(!esVacia() && cima->valor.esta_registrado == 1){
-            aux.apilar( cima->valor );
-            desapilar();
-        }
-        apilar(c);
-        while ( !aux.esVacia() ){
-            apilar(aux.cima);
-            aux.desapilar();
-        } 
-    }
-    
+    ncima = p.ncima;
+    copia = true;
+}
+
+Pila::~Pila()
+{ 
+    while(ncima) desapilar();
+}
+
+bool Pila::esVacia()
+{ 
+    return ncima == NULL; 
+}
+
+Cliente Pila::cima(){ return ncima->valor; } //creado para una mayor intuitividad y legibilidad del codigo
+
+void Pila::apilar(Cliente v)
+{ 
+    pnodo nuevo = new NodoPila(v, ncima);
+    //comienzo de la pila nevo nodo
+    ncima = nuevo;
 }
 
 void Pila::desapilar()
 { 
     pnodo nodo; //puntero aux para manipular el nodo
-    if(cima){
-        nodo = cima;
-        cima = nodo->siguiente;
-        delete nodo;
+    if(ncima){
+        nodo = ncima;
+        ncima = nodo->siguiente;
     }
+    if(!copia){ delete nodo; }
 }
 
-void Pila::mostrar()
+void Pila::mostrarCima()
 { 
     if(esVacia()) {
         cout << "Pila vacia"<<endl;
     }
     else{
         cout << "Cima pila: ";
-        cima->valor.showString();
+        ncima->valor.showString();
         cout << "\n";
     }
 
 }
 
-void Pila::mostrarToda()
-{ 
-    int num = contar();
-    if( num < 1 ){ cout << "\n\nPila vacia\n"; }
+//CREADOS APARTE PARA UNA MAYOR LIMPIEZA DE CÓDIGO
+
+void Pila::apilarPorTipo(Cliente c){
+    if( esVacia() || c.esta_registrado ){ apilar(c);}
     else{
-        cout << "\n\nPila: " << num << "\n";
-        pnodo nodo = cima;
-        while( nodo != NULL ){
-            cout << "Elemento: ";
-            nodo->valor.showString();
-            cout << "\n";
-            nodo = nodo->siguiente;
+        Pila paux;
+        while( !esVacia() && cima().esta_registrado ){
+            paux.apilar(cima());
+            desapilar();
         }
-        delete nodo;
+        apilar(c);
+        paux=inversa(paux);
+        montar(paux);
+    }
+}
+
+void Pila::montar( Pila encima ){
+    Pila paux = inversa(encima);
+    while( !paux.esVacia() ){
+        apilar( paux.cima() );
+        paux.desapilar();
     }
 }
 
 //EJERCICIOS
 
-int Pila::contar( )
-{ 
-    pnodo nodo = cima;
-    int valor = 0;
-    while( nodo != NULL ){
-        nodo = nodo->siguiente;
-        valor++;
-    }
-    delete nodo;
-    return valor;
-}
-
-void Pila::fondo( )
-{ 
-    pnodo nodo = cima;
-    while( nodo->siguiente != NULL ){
-        nodo = nodo->siguiente;
-    }
-    nodo->valor.showString();
-    delete nodo;
-}
-
-void Pila::invertir()
-{ 
-    if( !esVacia() ){
-        Pila pilavacia;
-        pnodo nodo = cima;
-        while( nodo != NULL ){
-            pilavacia.apilar(nodo->valor);
-            nodo = nodo->siguiente;
-        }
-        cima = pilavacia.cima;
-        delete nodo;
+void mostrar( Pila p ){
+    cout << "\nPila de ( " << contar(p) << " elementos ):\n";
+    while( !p.esVacia() ){
+        p.mostrarCima();
+        p.desapilar();
     }
 }
 
-void Pila::montar( Pila pilaapilar )
-{ 
-    pilaapilar.invertir();
-    while( !pilaapilar.esVacia() ){
-        apilar( pilaapilar.cima->valor );
-        pilaapilar.desapilar();
+int contar( Pila p ){
+    int num = 0;
+    while( !p.esVacia() ){
+        num++;
+        p.desapilar();
+    }
+    return num;
+}
+
+void consultarFondo( Pila p ){
+    cout << "Fondo de la pila: ";
+    mostrar(inversa(p));
+    cout << "\n";
+}
+
+Pila eliminarFondoPila( Pila p ){
+    p = inversa(p);
+    p.desapilar();
+    return inversa(p); 
+}
+
+Pila inversa_aux( Pila p1, Pila p2 ){
+    if( p1.esVacia() ){ return p2; }
+    else{
+        p2.apilar( p1.cima() );
+        p1.desapilar();
+        return inversa_aux( p1, p2 );
     }
 }
 
-void Pila::quitar( int num_elems )
-{ 
-    if(contar() >= num_elems){
-        pnodo nodo = cima;
-        while( num_elems > 0 ){
-            nodo = nodo->siguiente;
-            num_elems--;
-        }
-        cima = nodo;
-        delete nodo;
-    } else { cout << "No se pueden quitar más elementos de los que hay (hay " << contar() << " elementos)\n"; }
+Pila inversa( Pila p ){
+    Pila pvacia;
+    return inversa_aux( p, pvacia );
 }
 
-void Pila::eliminarFondoPila()
-{ 
-    invertir();
-    desapilar();
-    invertir();
+Pila montar_aux( Pila debajo, Pila encima ){
+    encima = inversa(encima);
+    while( !encima.esVacia() ){
+        debajo.apilar( encima.cima() );
+        encima.desapilar();
+    }
+    return debajo;
 }
 
-bool Pila::existeMismoIdentificador(Cliente c){
+Pila montar( Pila debajo, Pila encima ){ return montar_aux( debajo, encima ); }
+
+Pila quitar( Pila p, int num ){
+    if( p.esVacia() || num <= 0 ){ return p; }
+    else{
+        p.desapilar();
+        return quitar( p, num-1 );
+    }
+}
+
+bool existeMismoIdentificador( Pila p, Cliente c ){
     bool estado = false;
-    pnodo nodo = cima;
-    char texto1[10];
-    char texto2[10];
-    for( int i = 0; i < 9; i++ ){ texto1[i] = c.identificador_cliente[i]; }
-    texto1[9] = '\0';
-    while( nodo != NULL && !estado ){
-        for( int i = 0; i < 9; i++ ){ texto2[i] = nodo->valor.identificador_cliente[i]; }
-        texto2[9] = '\0';
-        cout << "Texto1: " << texto1 << "\n";
-        cout << "Texto2: " << texto2 << "\n";
-        if( strcmp( texto1, texto2 ) == 0 ){ nodo = NULL; estado = true; }
-        else{ nodo = nodo->siguiente; }
+    while( !p.esVacia() && !estado ){
+        if( strcmp( c.getIdentificador(), p.cima().getIdentificador() ) == 0 ){ return true; }
+        p.desapilar();
     }
     return estado;
 }
 
-bool Pila::existeMismoIdentificador(char texto[10]){
-    bool estado = false;
-    pnodo nodo = cima;
-    char texto1[10];
-    char texto2[10];
-    for( int i = 0; i < 9; i++ ){ texto1[i] = texto[i]; }
-    texto1[9] = '\0';
-    while( nodo != NULL && !estado ){
-        for( int i = 0; i < 9; i++ ){ texto2[i] = nodo->valor.identificador_cliente[i]; }
-        texto2[9] = '\0';
-        cout << "Texto1: " << texto1 << "\n";
-        cout << "Texto2: " << texto2 << "\n";
-        if( strcmp( texto1, texto2 ) == 0 ){ nodo = NULL; estado = true; }
-        else{ nodo = nodo->siguiente; }
-    }
-    delete nodo;
-    return estado;
-}
-
-/*
-bool Pila::esOrdenCreciente(){
-    int numero = cima->valor;
-    pnodo nodo = cima->siguiente;
-    while( nodo != NULL ){
-        if( numero < nodo->valor ){ return false; }
-        numero = nodo->valor;
-        nodo = nodo->siguiente;
-    }
-    return true;
-}
-
-bool Pila::esOrdenDecreciente(){
-    int numero = cima->valor;
-    pnodo nodo = cima->siguiente;
-    while( nodo != NULL ){
-        if( numero > nodo->valor ){ return false; }
-        numero = nodo->valor;
-        nodo = nodo->siguiente;
-    }
-    return true;
-}
-*/

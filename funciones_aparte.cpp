@@ -22,76 +22,74 @@ int caracterANumeroPositivo( char *numerochar, int numerocaracts ){
     return numero;
 }
 
-char *charAleatorioNDigitos( int num_digits, int long_cadena ){
-    char *devolver = new char[long_cadena+1];
-    for( int i = 0; i < num_digits; i++){
-        int num = 0;
-        num = rand() % 10;
-        *(devolver+i) = ( (char) num ) + '0';
-    }
-    *(devolver+long_cadena) = '\0';
-    return devolver;
+int contarDigitosEntero( int entero ){
+    int cont = 0;
+    while(entero != 0) { entero = entero / 10; cont++; }
+    return cont;
+}
+
+char *charAleatorioNDigitos( int num_digitos, int long_cadena, bool primmaycero, bool derecha, int desp ){
+    if( num_digitos+desp <= long_cadena ){
+        char *devolver = new char[long_cadena+1];
+        for(int i = 0; i <= long_cadena; i++){ *(devolver+i) = '0'; } *(devolver+long_cadena) = '\0';
+        int pos = desp;
+        int num;
+        if( derecha ){ pos = long_cadena-num_digitos; }
+        for( int i = pos; i < long_cadena; i++){
+            if( primmaycero ){ num = rand() % 9 + 1; primmaycero = false; } else { num = rand() % 10; }
+            *(devolver+i) = ( (char) num ) + '0';
+        }
+        return devolver;
+    } else { cout << "No se puede representar ese numero"; }
 }
 
 char *generarDniAleatorio(){
-    char *dni = charAleatorioNDigitos( 8, 10 );
+    char *dni = charAleatorioNDigitos( 8, 9, true, false, 0 );
     int numero_dni = caracterANumeroPositivo( dni , 8);
     char codigos[24] = "TRWAGMYFPDXNBJZSQVHLCKE";
     char caracter_dni = codigos[numero_dni % 23];
     *(dni+8) = caracter_dni;
-    *(dni+9) = '\n';
-    char *puntero = dni;
-    return puntero;
-}
-
-char *intAChar( int numero, int num_digitos, int long_cadena ){
-    char *devolver = new char[long_cadena+1];
-    int pos = num_digitos-1;
-    int digito;
-    for(int i = 0; i < long_cadena; i++){ *(devolver+i) = '0'; }
-    while(numero != 0) {
-        digito = numero % 10;
-        *(devolver+pos) = ( (char) digito ) + '0';
-        numero = numero / 10;
-        pos--;
-    }
-    *(devolver+long_cadena) = '\0';
-    return devolver;
-}
-
-char *generarDniDeNumero( int numero ){
-    char *dni = intAChar( numero, 8, 10 );
-    char codigos[24] = "TRWAGMYFPDXNBJZSQVHLCKE";
-    char caracter_dni = codigos[numero % 23];
-    *(dni+8) = caracter_dni;
-    *(dni+9) = '\n';
-    char *puntero = dni;
-    return puntero;
-}
-
-char *generarCodregDeNumero( int numero ){
-    char *numero_codreg = intAChar( numero, 3, 3 );
-    char *codreg = new char[10];
-    char char_codreg[7] = "CODREG";
-    *(codreg+8) = '0';
-    *(codreg+7) = '0';
-    *(codreg+6) = '0';
-    for( int i = 0; i < 6; i++ ){ *(codreg+i) = *(char_codreg+i); }
-    for( int i = 0; i < 3; i++ ){ *(codreg+6+i) = *(numero_codreg+i); }
-    *(codreg+9) = '\0';
-    char *puntero = codreg;
-    return puntero;
+    return dni;
 }
 
 char *generarCodregAleatorio(){
-    char *numero_codreg = charAleatorioNDigitos( 3, 3 );
-    char *codreg = new char[10];
+    char *codreg = charAleatorioNDigitos( 3, 9, false, true, 0 );
     char char_codreg[7] = "CODREG";
     for( int i = 0; i < 6; i++ ){ *(codreg+i) = *(char_codreg+i); }
-    for( int i = 0; i < 3; i++ ){ *(codreg+6+i) = *(numero_codreg+i); }
-    *(codreg+9) = '\0';
-    char *puntero = codreg;
-    return puntero;
+    return codreg;
+}
+
+char *intAChar( int numero, int num_digitos, bool derecha, int desp ){
+    int contados = contarDigitosEntero( numero );
+        if( num_digitos >= contados+desp ){
+        char *devolver = new char[num_digitos+1];
+        for(int i = 0; i <= num_digitos; i++){ *(devolver+i) = '0'; } *(devolver+num_digitos) = '\0';
+        int pos = contados-1+desp;
+        int digito;
+        if( derecha ){ pos = num_digitos-1-desp; }
+        while(numero != 0) {
+            digito = numero % 10;
+            *(devolver+pos) = ( (char) digito ) + '0';
+            numero = numero / 10;
+            pos--;
+        }
+        return devolver;
+    } else { cout << "No se puede representar ese numero"; }
+}
+
+char *generarDniDeNumero( int numero ){
+    char *dni = intAChar( numero, 9, false, 8-contarDigitosEntero(numero) );
+    char codigos[24] = "TRWAGMYFPDXNBJZSQVHLCKE";
+    char caracter_dni = codigos[numero % 23];
+    *(dni+8) = caracter_dni;
+    return dni;
+}
+
+char *generarCodregDeNumero( int numero ){
+    char *codreg = intAChar( numero, 9, true, 0 );
+    char char_codreg[7] = "CODREG";
+    for( int i = 0; i < 6; i++ ){ *(codreg+i) = *(char_codreg+i); }
+    return codreg;
 }
 
 int get_int( char texto[] ){

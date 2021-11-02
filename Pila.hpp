@@ -6,28 +6,36 @@ class Pila
 {
     
     private:
-        pnodo cima; 
+        pnodo ncima;
+        bool copia = false;
+        
     public:
         Pila();
         ~Pila();
+        Pila(const Pila &p); //creado para evitar la implementación de memoria dinámica lo máximo posible (junto con ajustes en las void Pila::desapilar() y en Pila::~Pila() )
         bool esVacia();
-        bool existeMismoIdentificador(Cliente c);
-        bool existeMismoIdentificador(char texto[10]);
+        Cliente cima(); //creado para una mayor intuitividad y legibilidad del codigo
         void apilar(Cliente c);
-        void apilarPorTipo(Cliente c);
         void desapilar();
-        void mostrar();
-        void mostrarToda();
-        //EJERCICIOS
-        int contar();
-        void fondo();
-        void montar( Pila pila );
-        void quitar( int num_elems );
-        void invertir();
-        //bool esOrdenCreciente();
-        //bool esOrdenDecreciente();
-        void eliminarFondoPila();
+        void mostrarCima();
+        //CREADOS APARTE PARA UNA MAYOR LIMPIEZA DE CÓDIGO
+        void montar( Pila encima );
+        void apilarPorTipo(Cliente c);
 
 };
+
+//EJERCICIOS
+void mostrar( Pila p );
+int contar( Pila p );
+void consultarFondo( Pila p );
+Pila inversa_aux( Pila p1, Pila p2 );
+Pila inversa( Pila p );
+Pila montar_aux( Pila debajo, Pila encima );
+Pila montar( Pila debajo, Pila encima );
+Pila quitar( Pila p, int num );
+void invertir( Pila& p );
+Pila eliminarFondoPila( Pila p );
+bool ordenDecreciente( Pila p );
+bool existeMismoIdentificador( Pila p, Cliente c );
 
 #endif // PILA_HPP

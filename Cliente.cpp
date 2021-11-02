@@ -9,7 +9,7 @@ using namespace std;
 Cliente::Cliente()
 {
     esta_registrado = generarBoolAleatorio();
-    minuto_llegada = generarIntAleatorio( 0, 60 );
+    minuto_llegada = generarIntAleatorio( 0, 59 );
     if( esta_registrado ){ 
         char *puntero = generarCodregAleatorio();
         for( int i = 0; i < 9; i++ ){ identificador_cliente[i] = *(puntero+i); }
@@ -39,14 +39,11 @@ Cliente::Cliente( bool estado )
     
 }
 
-Cliente::Cliente( char *copiar_identificador )
+Cliente::Cliente( char diferencia )
 {
-    
     esta_registrado = introducirEstado();
     minuto_llegada = introducirMinuto();
     obtenerIdentificadorManualmente( esta_registrado );
-    strcpy( copiar_identificador, identificador_cliente );
-    
 }
 
 Cliente::~Cliente()
@@ -59,6 +56,10 @@ void Cliente::mostrarIdentificador(){
 
 bool Cliente::getEstado(){
     return esta_registrado;
+}
+
+char* Cliente::getIdentificador(){
+    return identificador_cliente;
 }
 
 void Cliente::showString(){

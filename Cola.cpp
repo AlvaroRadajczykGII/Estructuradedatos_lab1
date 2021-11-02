@@ -10,7 +10,47 @@ Cola::Cola()
     longitud = 0;
 }
 
-Cola::~Cola() { }
+Cola::Cola( const Cola &c )
+{
+    primero = c.primero;
+    ultimo = c.ultimo;
+    longitud = c.longitud;
+    copia = true;
+}
+
+Cola::~Cola(){
+    if(!copia){
+        while(!es_vacia()){ desencolar(); } 
+    } else {
+        primero = NULL; ultimo = NULL;
+    }
+}
+
+bool Cola::es_vacia()
+{ 
+    return ((primero == NULL) && (ultimo == NULL));
+}
+
+int Cola::get_longitud()
+{ 
+    return longitud;
+}
+
+Cliente Cola::inicio()
+{ 
+    if(!es_vacia())
+    { 
+        return primero->elemento;
+    }
+}
+
+Cliente Cola::fin()
+{ 
+    if(!es_vacia())
+    { 
+        return ultimo->elemento;
+    }
+}
 
 void Cola::encolar(Cliente elemento)
 { 
@@ -40,53 +80,32 @@ Cliente Cola::desencolar()
             primero = NULL;
             ultimo = NULL;
             aux->siguiente = NULL;
-            delete(aux);
+            if(!copia){ delete(aux); }
         }
         else
         { 
             primero = primero->siguiente;
-            aux->siguiente = NULL;
-            delete(aux);
+            if(!copia){
+                aux->siguiente = NULL;
+                delete(aux); 
+            }
         }
         longitud--;
         return elemento;
     }
 }
 
-Cliente Cola::inicio()
-{ 
-    if(!es_vacia())
-    { 
-        return primero->elemento;
-    }
+Cliente Cola::primerElem(){ //creado para una mayor intuitividad y legibilidad del codigo
+    return primero->elemento;
 }
 
-Cliente Cola::fin()
-{ 
-    if(!es_vacia())
-    { 
-        return ultimo->elemento;
-    }
-}
-
-int Cola::get_longitud()
-{ 
-    return longitud;
-}
-
-bool Cola::es_vacia()
-{ 
-    return ((primero == NULL) && (ultimo == NULL));
-}
-
-//No es correcto, la cola solo puede verse mostrando el primero y desencolando, se implementa para comprobar código facilmente.
-void Cola::mostrarCola()
+void Cola::mostrarCola() //No es correcto, la cola solo puede verse mostrando el primero y desencolando, se implementa para comprobar código facilmente.
 {
     NodoCola *aux = primero;
     
     if (es_vacia()) {cout<<"\n\nCola Vacia"<<endl;}
     else {
-        cout<<"Datos de la Cola (Arriba el inicio, y abajo el final): \n";
+        cout<<"Datos de la Cola de " << longitud << " elementos (Arriba el inicio, y abajo el final): \n";
         while (aux){
             cout << "Elemento: ";
             aux->elemento.showString();
@@ -96,36 +115,26 @@ void Cola::mostrarCola()
     }
 }
 
-bool Cola::existeMismoIdentificador(Cliente c){
-    bool estado = false;
-    NodoCola *aux = primero;
-    char *puntero2 = c.identificador_cliente;
-    char *puntero1;
-    if (es_vacia()) { return false; }
+//EXTRAS
+
+void mostrar( Cola c )
+{
+    if (c.es_vacia()) {cout<<"\n\nCola Vacia"<<endl;}
     else {
-        while (aux && !estado){
-            puntero1 = aux->elemento.identificador_cliente;
-            if( strcmp( puntero1, puntero2 ) == 0 ){ estado = true; }
-            aux = aux->siguiente;
+        cout<<"Datos de la Cola de " << c.get_longitud() << " elementos (Arriba el inicio, y abajo el final): \n";
+        while (!c.es_vacia()){
+            cout << "Elemento: ";
+            c.desencolar().showString();
+            cout << "\n";
         }
     }
-    return estado;
 }
 
-bool Cola::existeMismoIdentificador(char *texto){
+bool existeMismoIdentificador( Cola c, Cliente cl ){
     bool estado = false;
-    NodoCola *aux = primero;
-    char *puntero1;
-    if (es_vacia()) { return false; }
-    else {
-        while (aux && !estado){
-            puntero1 = aux->elemento.identificador_cliente;
-            cout << "PARAMETRO: " << texto << "\n";
-            cout << "ELEM COLA: " << puntero1 << "\n";
-            cout << strcmp( puntero1, texto ) << "\n";
-            if( strcmp( puntero1, texto ) == 0  ){ estado = true; }
-            aux = aux->siguiente;
-        }
+    while (!c.es_vacia() && !estado){
+        if( strcmp( cl.getIdentificador(), c.primerElem().getIdentificador() ) == 0 ){ return true; }
+        c.desencolar();
     }
     return estado;
 }
